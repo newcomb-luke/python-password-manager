@@ -192,8 +192,6 @@ def return_or_request_vault(auth_key, vault_key, vault):
             return None
 
 def return_and_update_vault(auth_key, vault_key, vault):
-    print(f"{vault.to_json()}")
-
     response = update_vault(auth_key.hex(), vault.encrypt(vault_key).hex())
 
     if response.success:
@@ -207,15 +205,14 @@ def view_vault_action(auth_key, vault_key, vault):
     vault = return_or_request_vault(auth_key, vault_key, vault)
 
     if vault is not None:
-        print(f"{vault.to_json()}")
         print("Logins: ")
         for login in vault.logins():
             print(f"Name: {login['name']}")
-            print(f"Websites: {login['websites']}")
-            print(f"Username: {login['username']}")
-            print(f"Password: {login['password']}")
+            print(f"\tWebsites: {login['websites']}")
+            print(f"\tUsername: {login['username']}")
+            print(f"\tPassword: {login['password']}")
             if login['description']:
-                print(f"Desc: {login['description']}")
+                print(f"\tDesc: {login['description']}")
     else:
         print("Error requesting vault")
 
