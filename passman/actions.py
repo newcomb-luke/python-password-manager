@@ -101,29 +101,14 @@ def update_master_password_action(email, auth_key, vault_key, vault):
         new_vault_key = generate_vault_key(email, new_password)
         new_auth_key = generate_auth_key(new_vault_key, new_password)
 
-        response = update_key(auth_key.hex(), new_auth_key.hex())
+        new_vault = vault.encrypt(new_vault_key)
+
+        response = update_key(auth_key.hex(), new_auth_key.hex(), new_vault.hex())
 
         if response.success:
-            # Now we have to update the vault in our database
-            response = update_vault(new_auth_key.hex(), vault.encrypt(new_vault_key).hex())
+            print("Successfully updated master password")
 
-            if response.success:
-                print("Successfully updated master password")
-
-                return (new_auth_key, new_vault_key, vault)
-            else:
-                # This is REALLY bad, because we have now updated our master key, but our vault is still
-                # encrypted using the old key. In this situation our best bet is to try to revert the change.
-                # Theoretically though, if this frontend was written correctly this would never happen.
-                print("THIS WAS PROGRAMMED WRONG, attempting to undo error.")
-
-                response = update_key(new_auth_key.hex(), auth_key.hex())
-
-                if response.success:
-                    print("Failed to update master password, but reverted error. Please yell at the developer of this.")
-                else:
-                    # This is why we really need to look out for this and debug debug debug!!!
-                    print("FAILED TO REVERT ERROR. Your account may be unusable.")
+            return (new_auth_key, new_vault_key, vault)
         else:
             print("Failed to update master password")
     else:

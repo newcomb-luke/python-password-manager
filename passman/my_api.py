@@ -55,13 +55,14 @@ def register(email: str, auth_key: str, vault: str):
 
     return make_request(REGISTER_ENDPOINT, headers)
 
-def update_key(old_auth_key: str, new_auth_key: str):
+def update_key(old_auth_key: str, new_auth_key: str, new_vault: str):
     """
     Updates a user's key to the password manager
     """
     headers = {
             "x-auth-key": old_auth_key,
-            "x-new-auth-key": new_auth_key
+            "x-new-auth-key": new_auth_key,
+            "x-vault": new_vault
     }
 
     return make_request(UPDATE_KEY_ENDPOINT, headers)
